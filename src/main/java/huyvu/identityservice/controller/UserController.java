@@ -1,9 +1,15 @@
 package huyvu.identityservice.controller;
 
+import huyvu.identityservice.dto.request.ApiResponse;
 import huyvu.identityservice.dto.request.UserCreationRequest;
 import huyvu.identityservice.dto.request.UserUpdateRequest;
+import huyvu.identityservice.dto.response.UserResponse;
 import huyvu.identityservice.model.User;
 import huyvu.identityservice.service.UserService;
+import jakarta.validation.Valid;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,15 +17,20 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
+// tự động tạo contructor cho những biến có final
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
-    @Autowired
-    private UserService userService;
+
+     UserService userService;
 
 
     //convention of set name API
     @PostMapping
-    User crateUser(@RequestBody UserCreationRequest request){
-        return userService.createUser(request);
+    ApiResponse<User> crateUser(@RequestBody @Valid UserCreationRequest request){
+        ApiResponse<User> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userService.createUser(request));
+        return apiResponse;
 
     }
     @GetMapping
@@ -28,12 +39,12 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public User getUser(@PathVariable String userId){
+    public UserResponse getUser(@PathVariable String userId){
         return userService.getUser(userId);
 
     }
     @PutMapping("/{userId}")
-    public User updateUser( @PathVariable String userId ,@RequestBody UserUpdateRequest request ){
+    public UserResponse updateUser( @PathVariable String userId ,@RequestBody UserUpdateRequest request ){
         return userService.updateUser(userId,request);
     }
 
