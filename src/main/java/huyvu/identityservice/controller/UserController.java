@@ -28,9 +28,10 @@ public class UserController {
     //convention of set name API
     @PostMapping
     ApiResponse<User> crateUser(@RequestBody @Valid UserCreationRequest request){
-        ApiResponse<User> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.createUser(request));
-        return apiResponse;
+
+        return ApiResponse.<User>builder()
+                .result(userService.createUser(request))
+                .build();
 
     }
     @GetMapping
