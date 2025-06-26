@@ -26,19 +26,29 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> b3d575331accd42e003f9c1f8c8727032197deca
     UserRepository userRepository;
     UserMapper userMapper;
 
     public User createUser(UserCreationRequest request) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> b3d575331accd42e003f9c1f8c8727032197deca
 
         if (userRepository.existsUserByUsername(request.getUsername()))
         {
             throw new AppException(ErrorCode.USER_EXIST);
         }
         User user = userMapper.toUser(request);
+<<<<<<< HEAD
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+=======
+>>>>>>> b3d575331accd42e003f9c1f8c8727032197deca
 
         return userRepository.save(user);
     }
