@@ -44,13 +44,14 @@ dependencies {
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
     // Nếu dùng Lombok + MapStruct chung
     annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
-<<<<<<< HEAD
-// https://mvnrepository.com/artifact/org.mindrot.bcrypt/bcrypt
-    implementation "org.springframework.security:spring-security-crypto:6.1.3"
-    implementation 'com.nimbusds:nimbus-jose-jwt:9.39.3'
 
-=======
->>>>>>> b3d575331accd42e003f9c1f8c8727032197deca
+// https://mvnrepository.com/artifact/org.mindrot.bcrypt/bcrypt
+//    implementation "org.springframework.security:spring-security-crypto:6.1.3"
+
+
+//    spring security
+//    auto turn on config security
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
 
 

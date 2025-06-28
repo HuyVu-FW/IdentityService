@@ -10,23 +10,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = RuntimeException.class)
-    ResponseEntity<ApiResponse> handlingRuntimeException(RuntimeException exception){
-<<<<<<< HEAD
-        ApiResponse apiResponse = ApiResponse.builder()
-                .message(exception.getMessage())
-                .code(1001)
-                .build();
+    ResponseEntity<ApiResponse> handlingRuntimeException(RuntimeException exception) {
 
-=======
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setMessage(exception.getMessage());
-        apiResponse.setCode(1001);
->>>>>>> b3d575331accd42e003f9c1f8c8727032197deca
+        ApiResponse apiResponse = ApiResponse.builder().message(exception.getMessage()).code(1001).build();
+
+
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
-    @ExceptionHandler(value =  MethodArgumentNotValidException.class)
-    ResponseEntity<ApiResponse> handlingMethodArgumentNotValidException(MethodArgumentNotValidException exception){
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    ResponseEntity<ApiResponse> handlingMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         // lấy ra message, message đó chính là ennum key
         String enumkey = exception.getFieldError().getDefaultMessage();
         ErrorCode errorCode = ErrorCode.INVALID_KEY;
@@ -45,7 +38,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(value = AppException.class)
-    ResponseEntity<ApiResponse> handlingRuntimeException(AppException exception){
+    ResponseEntity<ApiResponse> handlingRuntimeException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setMessage(errorCode.getMessage());
@@ -54,10 +47,9 @@ public class GlobalExceptionHandler {
     }
 
 
-
     ///  xử lí tất cả cac exception nếu không nằm trong mấy cái trên
     @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiResponse> handlingRuntimeException(Exception exception){
+    ResponseEntity<ApiResponse> handlingRuntimeException(Exception exception) {
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setMessage(ErrorCode.UNCATEGORY_EXCEPTION.getMessage());
         apiResponse.setCode(ErrorCode.UNCATEGORY_EXCEPTION.getCode());
