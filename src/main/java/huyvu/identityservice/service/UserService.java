@@ -15,6 +15,9 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,7 +46,7 @@ public class UserService {
         User user = userMapper.toUser(request);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-// set defau Rolse
+        // set default Role
         user.setRoles(Set.of(Role.USER.name()));
         return userRepository.save(user);
     }
@@ -52,7 +55,11 @@ public class UserService {
         return userRepository.findAll();
     }
 
+
+
+    @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUser(String id) {
+
         return userMapper.toUserResponse(userRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.USER_NOT_FOUND)));
     }
@@ -65,5 +72,17 @@ public class UserService {
 
     public void deleteUser(String id){
         userRepository.deleteById(id);
+    }
+
+
+    public UserResponse getMyInfo(){
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new AppException(ErrorCode.USER_NOT_FOUND)
+        );
+
+        return userMapper.toUserResponse(user);
     }
 }
