@@ -2,7 +2,7 @@ package huyvu.identityservice.configuration;
 
 
 import huyvu.identityservice.dto.response.UserResponse;
-import huyvu.identityservice.enums.Role;
+import huyvu.identityservice.model.Role;
 import huyvu.identityservice.model.User;
 import huyvu.identityservice.repository.UserRepository;
 import lombok.*;
@@ -27,11 +27,11 @@ public class ApplicationInitConfig {
     ApplicationRunner applicationRunner(UserRepository userRepository) {
         return args -> {
             if (userRepository.findByUsername("admin").isEmpty()) {
-                var roles = Set.of(Role.ADMIN.name(), Role.USER.name());
+                var roles = Set.of(Role.builder().name(huyvu.identityservice.enums.Role.ADMIN.name()).build());
                 User user = User.builder()
                         .username("admin")
                         .password(passwordEncoder.encode("admin"))
-                        .roles(roles)
+//                        .roles(roles)
                         .build();
                 userRepository.save(user);
                 log.error("Admin has been created");

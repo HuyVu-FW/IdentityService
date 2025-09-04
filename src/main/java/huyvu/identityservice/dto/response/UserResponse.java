@@ -1,5 +1,6 @@
 package huyvu.identityservice.dto.response;
 
+import huyvu.identityservice.enums.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,13 +12,15 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+
 public class UserResponse {
     String id;
     String username;
     String firstName;
     String lastName;
     LocalDate dob;
-    Set<String> roles;
+    Set<Role> roles;
+    
 
 }
 
