@@ -16,9 +16,12 @@ public interface UserMapper {
      User toUser(UserCreationRequest request);
 
      // lấy thông tin từ thằng request gán cho thằng user
+
+    @Mapping(target = "roles",ignore = true)
      void updateUser(@MappingTarget User user, UserUpdateRequest request);
     // source là cái đi map, target là cái mình sẽ lấy về
 //    @Mapping(source = "",target = "")
 //     @Mapping(target = "lastName",ignore = true) // bỏ field trong target
+    @Mapping(target = "roles",ignore = true)
      UserResponse toUserResponse(User user);
 }

@@ -11,6 +11,7 @@ import lombok.experimental.FieldDefaults;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "identity_permisstion")
 public class Permission {

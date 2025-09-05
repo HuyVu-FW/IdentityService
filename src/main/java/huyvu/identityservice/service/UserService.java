@@ -9,6 +9,7 @@ import huyvu.identityservice.exception.AppException;
 import huyvu.identityservice.exception.ErrorCode;
 import huyvu.identityservice.mapper.UserMapper;
 import huyvu.identityservice.model.User;
+import huyvu.identityservice.repository.RoleRepository;
 import huyvu.identityservice.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -35,6 +37,7 @@ public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
     PasswordEncoder  passwordEncoder;
+    RoleRepository roleRepository;
 
     public User createUser(UserCreationRequest request) {
 
@@ -51,6 +54,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // thường sẽ chặn ở đây
+
+    // hasRole thì nó tự động config thêm ROLE ở trong scoe
+    // còn hasAuthority thì nó so sánh trực tiếp, không thêm gì
+    @PreAuthorize("hasAuthority('CREATE_DATA')")
     public List<User> getUsers() {
         return userRepository.findAll();
     }
@@ -66,6 +74,13 @@ public class UserService {
 
     public UserResponse updateUser(String userId, UserUpdateRequest request) {
         User user = userRepository.findById(userId).orElseThrow( () -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        userMapper.updateUser(user, request);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        var roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
+
         return userMapper.toUserResponse(userRepository.save(user));
 
     }

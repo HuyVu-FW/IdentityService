@@ -31,7 +31,7 @@ public class UserController {
 
     //convention of set name API
     @PostMapping
-    ApiResponse<User> crateUser(@RequestBody @Valid UserCreationRequest request){
+    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request){
 
 
         return ApiResponse.<User>builder()

@@ -11,6 +11,7 @@ import java.util.Set;
 @Builder
 @Entity
 @NoArgsConstructor
+
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "identity_user")
