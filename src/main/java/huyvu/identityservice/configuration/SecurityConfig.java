@@ -1,6 +1,7 @@
 package huyvu.identityservice.configuration;
 
 import huyvu.identityservice.enums.Role;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,13 +23,19 @@ import javax.crypto.spec.SecretKeySpec;
 
 @Configuration  // nó tụ hiểu có cho vui
 @EnableWebSecurity
-@EnableMethodSecurity ///  dùng method, cách này phổ biển hơn
+@EnableMethodSecurity
+///  dùng method, cách này phổ biển hơn
 public class SecurityConfig {
 
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY;
 
-    private final String[] PULIC_ENPOINTS = {"/users", "/auth/token", "/auth/introspect"};
+
+
+    @Autowired
+    private CustomJwtDecoder customJwtDecoder;
+
+    private final String[] PULIC_ENPOINTS = {"/users", "/auth/token", "/auth/introspect", "/auth/logout"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -36,10 +43,9 @@ public class SecurityConfig {
                 request.requestMatchers(HttpMethod.POST, PULIC_ENPOINTS).permitAll()
 
                         //scope Admin
-                        .requestMatchers(HttpMethod.GET,"users").hasAnyAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "users").hasAnyAuthority("ROLE_ADMIN")
 //Từ tìm tự map, cách này gọn
 //                        .requestMatchers(HttpMethod.POST,"users").hasRole(Role.ADMIN.name())
-
 
 
                         .anyRequest().authenticated());
@@ -48,40 +54,40 @@ public class SecurityConfig {
         httpSecurity.oauth2ResourceServer(
                 oauth2 ->
                         oauth2.jwt(jwtConfigurer ->
-                                jwtConfigurer.decoder(jwtDecoder())
+                                        jwtConfigurer.decoder(customJwtDecoder)
 
-                                        //contumize converter thành ROle
-                                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                                                //contomize converter thành ROle
+                                                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
         );
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         return httpSecurity.build();
     }
 
-
     @Bean
-  JwtAuthenticationConverter jwtAuthenticationConverter(){
+    JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         // bình thường cái ở trên dùng SCOPE , conver thành role_ cho quen thuộc
 //        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-        //đã thêm thôi nên bỏ nó đi
+        //đã thêm rồi nên bỏ nó đi
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
 
-  }
-    @Bean
-    JwtDecoder jwtDecoder() {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(SIGNER_KEY.getBytes(), "HS512");
-        return NimbusJwtDecoder
-                .withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
-                .build();
     }
+    //old, replace by customJwtDecoder
+//    @Bean
+//    JwtDecoder jwtDecoder() {
+//        SecretKeySpec secretKeySpec = new SecretKeySpec(SIGNER_KEY.getBytes(), "HS512");
+//        return NimbusJwtDecoder
+//                .withSecretKey(secretKeySpec)
+//                .macAlgorithm(MacAlgorithm.HS512)
+//                .build();
+//    }
 
     @Bean
-    PasswordEncoder passwordEncoder (){
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
 

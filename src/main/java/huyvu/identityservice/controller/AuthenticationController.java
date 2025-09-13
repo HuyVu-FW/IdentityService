@@ -5,6 +5,7 @@ import com.nimbusds.jose.JOSEException;
 import huyvu.identityservice.dto.request.ApiResponse;
 import huyvu.identityservice.dto.request.AuthenticationRequest;
 import huyvu.identityservice.dto.request.IntrospectRequest;
+import huyvu.identityservice.dto.request.LogoutRequest;
 import huyvu.identityservice.dto.response.AuthenticationResponse;
 import huyvu.identityservice.dto.response.IntrospectResponse;
 import huyvu.identityservice.service.AuthenticationService;
@@ -45,4 +46,15 @@ public class AuthenticationController {
         return ApiResponse.<IntrospectResponse>builder().
                 result(result)
                 .build();
-}}
+}
+
+    @PostMapping("/logout")
+    ApiResponse<Void> logOut(@RequestBody LogoutRequest logoutRequest) throws ParseException, JOSEException {
+
+        authenticationService.logout(logoutRequest);
+
+
+        return ApiResponse.<Void>builder()
+                .build();
+    }
+}

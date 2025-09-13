@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.FIELD;
 
-//antaion này sẽ được dùng ở đâu
+//anotaion này sẽ được dùng ở đâu
 @Target(FIELD)
 
 // sẽ được xử lí ở đâu

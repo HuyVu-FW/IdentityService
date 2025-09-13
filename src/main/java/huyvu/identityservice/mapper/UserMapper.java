@@ -12,7 +12,7 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-     // lấy thông tin cua thằng rquest tạo User
+     // lấy thông tin cua thằng request tạo User
      User toUser(UserCreationRequest request);
 
      // lấy thông tin từ thằng request gán cho thằng user

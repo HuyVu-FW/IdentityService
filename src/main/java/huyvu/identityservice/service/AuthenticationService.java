@@ -7,11 +7,14 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import huyvu.identityservice.dto.request.AuthenticationRequest;
 import huyvu.identityservice.dto.request.IntrospectRequest;
+import huyvu.identityservice.dto.request.LogoutRequest;
 import huyvu.identityservice.dto.response.AuthenticationResponse;
 import huyvu.identityservice.dto.response.IntrospectResponse;
 import huyvu.identityservice.exception.AppException;
 import huyvu.identityservice.exception.ErrorCode;
+import huyvu.identityservice.model.InvalidatedToken;
 import huyvu.identityservice.model.User;
+import huyvu.identityservice.repository.InvalidatedTokenRepository;
 import huyvu.identityservice.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -31,6 +34,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.StringJoiner;
+import java.util.UUID;
 
 @Log4j2
 @Service
@@ -38,6 +42,7 @@ import java.util.StringJoiner;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
     UserRepository userRepository;
+    InvalidatedTokenRepository invalidatedTokenRepository;
     @NonFinal
 //    lấy thông tin từ file cấu hình
     @Value("${jwt.signerKey}")
@@ -45,16 +50,19 @@ public class AuthenticationService {
 
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         var token = request.getToken();
-        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
-        SignedJWT signedJWT = SignedJWT.parse(token);
-// lấy thời gian hết hạn
-        Date expityTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-        var verified = signedJWT.verify(verifier);
+        boolean isValid = true;
 
+        try {
+            verifyToken(token);
+
+        } catch (AppException e) {
+          isValid = false;
+        }
         return IntrospectResponse.builder()
-//                kiểm tra xem nó cón hạn hay không
-                .valid(verified && expityTime.after(new Date()))
+                .valid(isValid)
                 .build();
+
+
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -78,6 +86,41 @@ public class AuthenticationService {
                 .build();
     }
 
+    public void logout(LogoutRequest tokenRequest) throws ParseException, JOSEException {
+
+        var signToken = verifyToken(tokenRequest.getToken());
+
+        String jit = signToken.getJWTClaimsSet().getJWTID();
+        Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
+
+
+        invalidatedTokenRepository.save(InvalidatedToken.builder()
+                .id(jit)
+                .expiryTime(expiryTime)
+                .build());
+
+
+    }
+
+
+    private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
+
+        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+        SignedJWT signedJWT = SignedJWT.parse(token);
+// lấy thời gian hết hạn
+        Date expityTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+        var verified = signedJWT.verify(verifier);
+
+        if (!(verified && expityTime.after(new Date())))
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+
+
+        if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        return signedJWT;
+
+    }
+
 
     // để dùng authorization thì trong token phải có roles (key = score, các thuộc tính cách nhau bằng dấu " ", đây là lần chỉnh sửa 2
     private String generateToken(User user) {
@@ -93,6 +136,7 @@ public class AuthenticationService {
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()))
                 .claim("customeClaim", "Custome by Huy, this is custome claim")
+                .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
                 .build();
         // tạo payload
@@ -113,9 +157,9 @@ public class AuthenticationService {
         StringJoiner stringJoiner = new StringJoiner(" ");
         if (!CollectionUtils.isEmpty(user.getRoles())) {
             user.getRoles().forEach(role -> {
-                stringJoiner.add("ROLE_"+role.getName());
+                stringJoiner.add("ROLE_" + role.getName());
                 if (!CollectionUtils.isEmpty(role.getPermissions()))
-                         role.getPermissions().forEach(permission -> stringJoiner.add(permission.getName()));
+                    role.getPermissions().forEach(permission -> stringJoiner.add(permission.getName()));
             });
         }
         return stringJoiner.toString();
