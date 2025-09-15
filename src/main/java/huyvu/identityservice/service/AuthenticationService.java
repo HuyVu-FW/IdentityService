@@ -84,7 +84,6 @@ public class AuthenticationService {
 
         var token = generateToken(user);
 
-
         return AuthenticationResponse.builder()
                 .authenticated(true)
                 .token(token)
@@ -107,8 +106,6 @@ public class AuthenticationService {
         } catch (AppException e) {
             log.info("Token already expired");
         }
-
-
     }
 
 

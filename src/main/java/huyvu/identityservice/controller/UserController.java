@@ -31,11 +31,12 @@ public class UserController {
 
     //convention of set name API
     @PostMapping
-    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request){
+    ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request){
 
 
-        return ApiResponse.<User>builder()
+        return ApiResponse.<UserResponse>builder()
                 .result(userService.createUser(request))
+                .code(1000)
                 .build();
     }
 

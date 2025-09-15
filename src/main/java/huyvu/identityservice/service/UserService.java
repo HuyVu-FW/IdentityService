@@ -35,7 +35,7 @@ public class UserService {
     PasswordEncoder  passwordEncoder;
     RoleRepository roleRepository;
 
-    public User createUser(UserCreationRequest request) {
+    public UserResponse createUser(UserCreationRequest request) {
 
 
         if (userRepository.existsUserByUsername(request.getUsername()))
@@ -47,7 +47,8 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         // set default Role
 //        user.setRoles(Set.of(Role.USER.name()));
-        return userRepository.save(user);
+        userRepository.save(user);
+        return userMapper.toUserResponse(user);
     }
 
     // thường sẽ chặn ở đây
