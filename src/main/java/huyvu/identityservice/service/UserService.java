@@ -4,18 +4,15 @@ package huyvu.identityservice.service;
 import huyvu.identityservice.dto.request.UserCreationRequest;
 import huyvu.identityservice.dto.request.UserUpdateRequest;
 import huyvu.identityservice.dto.response.UserResponse;
-import huyvu.identityservice.enums.Role;
 import huyvu.identityservice.exception.AppException;
-import huyvu.identityservice.exception.ErrorCode;
+import huyvu.identityservice.enums.ErrorCode;
 import huyvu.identityservice.mapper.UserMapper;
 import huyvu.identityservice.model.User;
 import huyvu.identityservice.repository.RoleRepository;
 import huyvu.identityservice.repository.UserRepository;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor

@@ -2,7 +2,7 @@ package huyvu.identityservice.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import huyvu.identityservice.dto.request.ApiResponse;
-import huyvu.identityservice.exception.ErrorCode;
+import huyvu.identityservice.enums.ErrorCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

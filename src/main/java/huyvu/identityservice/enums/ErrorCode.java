@@ -1,4 +1,4 @@
-package huyvu.identityservice.exception;
+package huyvu.identityservice.enums;
 
 
 import lombok.AllArgsConstructor;

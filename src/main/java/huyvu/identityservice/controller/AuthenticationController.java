@@ -2,10 +2,7 @@ package huyvu.identityservice.controller;
 
 
 import com.nimbusds.jose.JOSEException;
-import huyvu.identityservice.dto.request.ApiResponse;
-import huyvu.identityservice.dto.request.AuthenticationRequest;
-import huyvu.identityservice.dto.request.IntrospectRequest;
-import huyvu.identityservice.dto.request.LogoutRequest;
+import huyvu.identityservice.dto.request.*;
 import huyvu.identityservice.dto.response.AuthenticationResponse;
 import huyvu.identityservice.dto.response.IntrospectResponse;
 import huyvu.identityservice.service.AuthenticationService;
@@ -56,5 +53,16 @@ public class AuthenticationController {
 
         return ApiResponse.<Void>builder()
                 .build();
+    }
+
+    @PostMapping("/refresh-token")
+    ApiResponse<AuthenticationResponse> refresh(@RequestBody RefreshTokenRequest request) throws ParseException, JOSEException {
+
+        AuthenticationResponse result = authenticationService.refreshToken(request);
+
+        return ApiResponse.<AuthenticationResponse>builder().
+                result(result)
+                .build();
+
     }
 }

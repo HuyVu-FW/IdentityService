@@ -1,6 +1,7 @@
 package huyvu.identityservice.exception;
 
 
+import huyvu.identityservice.enums.ErrorCode;
 import lombok.Getter;
 
 @Getter

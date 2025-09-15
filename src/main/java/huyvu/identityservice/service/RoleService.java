@@ -7,13 +7,11 @@ import huyvu.identityservice.mapper.RoleMapper;
 import huyvu.identityservice.repository.PermissionRepository;
 import huyvu.identityservice.repository.RoleRepository;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 

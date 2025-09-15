@@ -35,7 +35,7 @@ public class SecurityConfig {
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
 
-    private final String[] PULIC_ENPOINTS = {"/users", "/auth/token", "/auth/introspect", "/auth/logout"};
+    private final String[] PULIC_ENPOINTS = {"/users", "/auth/token", "/auth/introspect", "/auth/logout","/auth/refresh-token"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
